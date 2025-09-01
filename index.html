@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Bí mật nho nhỏ 😘</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            padding: 50px;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            color: #d81b60;
+            text-shadow: 2px 2px #fff;
+            animation: fadeInDown 1.5s ease-in-out;
+        }
+
+        p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 1.2em;
+            background: linear-gradient(45deg, #ff4081, #f50057);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+        }
+
+        /* #scary-face {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            z-index: 9999;
+            animation: zoomIn 0.5s ease-in-out forwards;
+        } */
+
+        #scary-face {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 9999;
+            animation: jumpScare 0.2s ease-in-out forwards;
+        }
+
+        @keyframes jumpScare {
+            0% {
+                transform: translate(-50%, -50%) scale(0.3) rotate(0deg);
+                opacity: 0;
+            }
+
+            20% {
+                transform: translate(-50%, -50%) scale(1.2) rotate(5deg);
+                opacity: 1;
+            }
+
+            40% {
+                transform: translate(-50%, -50%) scale(1.5) rotate(-5deg);
+            }
+
+            60% {
+                transform: translate(-50%, -50%) scale(1.3) rotate(3deg);
+            }
+
+            80% {
+                transform: translate(-50%, -50%) scale(1.6) rotate(-3deg);
+            }
+
+            100% {
+                transform: translate(-50%, -50%) scale(1.4) rotate(0deg);
+            }
+        }
+
+        #love-message {
+            display: none;
+            font-size: 1.8em;
+            color: #e91e63;
+            margin-top: 40px;
+            animation: fadeIn 2s ease-in-out;
+            font-weight: bold;
+        }
+
+        .heart {
+            position: fixed;
+            width: 25px;
+            height: 25px;
+            background: url('https://cdn-icons-png.flaticon.com/512/833/833472.png') no-repeat center;
+            background-size: contain;
+            animation: float 4s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-100vh) scale(0.5);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Chào cậu nè 😚</h1>
+    <p>Tớ có một bí mật muốn nói với cậu...</p>
+
+    <button onclick="startSurprise()">Bấm vào đây nè 💖</button>
+
+    <!-- Hình troll -->
+    <img id="scary-face" src="quy.jpg" width="100%" alt="Boo!">
+
+    <!-- Lời tỏ tình -->
+    <div id="love-message">
+        💌 Thật ra tớ chỉ giả vờ troll thôi... <br> Tớ thích cậu lắm luôn đó! 💖<br>
+        Cảm ơn vì đã luôn hiện diện trong cuộc sống của tớ 💕
+    </div>
+
+    <!-- Âm thanh -->
+    <audio id="scary-sound" src="het.mp3"></audio>
+    <audio id="love-music" src="romantic.mp3" loop></audio>
+
+    <script>
+        function startSurprise() {
+            const face = document.getElementById("scary-face");
+            const scarySound = document.getElementById("scary-sound");
+            const loveMusic = document.getElementById("love-music");
+
+            // Hiện mặt quỷ + phát tiếng hét
+            face.style.display = "block";
+            scarySound.play();
+
+            // Sau 2.5 giây: ẩn quỷ, dừng hét, hiện lời tỏ tình + nhạc
+            setTimeout(() => {
+                face.style.display = "none";
+
+                // Dừng và reset âm thanh hét
+                scarySound.pause();
+                scarySound.currentTime = 0;
+
+                // Hiện lời tỏ tình + phát nhạc
+                document.getElementById("love-message").style.display = "block";
+                makeHearts();
+                loveMusic.play();
+            }, 2500);
+        }
+
+        function makeHearts() {
+            for (let i = 0; i < 40; i++) {
+                let heart = document.createElement("div");
+                heart.className = "heart";
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.animationDuration = 2 + Math.random() * 3 + "s";
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 6000);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
