@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cánh cửa tình yêu 💞 — 3 → 6 → 9 (Ballad)</title>
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <style>
+        :root {
+            --bg: #fff6fb;
+            --card: rgba(255, 255, 255, 0.82);
+            --accent1: #ff9dc0;
+            --accent2: #ff4da6;
+            --muted: #6e2240;
+            --glass-border: rgba(255, 77, 166, 0.12);
+            --win-glow: rgba(255, 100, 160, 0.18);
+            --door-shadow: rgba(200, 70, 120, 0.12);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+            background:
+                radial-gradient(900px 350px at 10% 10%, #fff0f6 0%, transparent 14%),
+                radial-gradient(800px 300px at 90% 85%, #fff2f8 0%, transparent 16%),
+                linear-gradient(180deg, #fff6fb 0%, #fff 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 22px;
+            color: var(--muted);
+        }
+
+        /* card */
+        .wrap {
+            width: 100%;
+            max-width: 820px
+        }
+
+        .card {
+            width: 100%;
+            background: var(--card);
+            border-radius: 18px;
+            padding: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 18px 50px rgba(190, 60, 110, 0.06);
+            backdrop-filter: blur(8px) saturate(120%);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px
+        }
+
+        .title {
+            font-weight: 800;
+            color: var(--accent2);
+            font-size: 1.05rem
+        }
+
+        .subtitle {
+            font-size: 0.92rem;
+            color: #6e2240
+        }
+
+        .score {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.9));
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            color: var(--accent2);
+            box-shadow: 0 8px 20px rgba(230, 60, 120, 0.06)
+        }
+
+        .prompt {
+            margin: 14px 0 10px 0;
+            text-align: center;
+            font-weight: 600;
+            color: #6e2a4a
+        }
+
+        /* doors layout */
+        .doors {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            align-items: flex-end;
+            flex-wrap: wrap
+        }
+
+        .door {
+            width: 28%;
+            min-width: 92px;
+            aspect-ratio: 3/4;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #fff, #fff7fb);
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: transform .32s cubic-bezier(.2, .9, .2, 1), box-shadow .28s ease, filter .28s;
+            box-shadow: 0 12px 30px var(--door-shadow), inset 0 -8px 18px rgba(0, 0, 0, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .door::before {
+            content: '';
+            position: absolute;
+            left: -30%;
+            top: -10%;
+            width: 60%;
+            height: 120%;
+            transform: rotate(-25deg);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.03));
+            opacity: 0.65;
+            pointer-events: none;
+            transition: transform .6s ease, opacity .4s ease;
+        }
+
+        .door:hover {
+            transform: translateY(-10px) rotateX(6deg) translateZ(0);
+            filter: saturate(1.03);
+            box-shadow: 0 28px 60px rgba(200, 70, 120, 0.10);
+        }
+
+        .face {
+            font-size: 48px;
+            transition: transform .36s ease, opacity .36s
+        }
+
+        .label {
+            position: absolute;
+            left: 12px;
+            bottom: 12px;
+            font-weight: 700;
+            color: var(--accent2)
+        }
+
+        .door.win {
+            background: linear-gradient(180deg, #fff7fb, #fff0f6);
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 30px 80px var(--win-glow);
+        }
+
+        .door.win::before {
+            transform: translateX(10px) rotate(-25deg) scale(1.1);
+            opacity: 1
+        }
+
+        /* wrong / shake */
+        @keyframes shakeX {
+            0% {
+                transform: translateX(0)
+            }
+
+            15% {
+                transform: translateX(-8px) rotate(-2deg)
+            }
+
+            30% {
+                transform: translateX(6px) rotate(1deg)
+            }
+
+            45% {
+                transform: translateX(-4px) rotate(-0.5deg)
+            }
+
+            60% {
+                transform: translateX(2px) rotate(0.3deg)
+            }
+
+            100% {
+                transform: translateX(0)
+            }
+        }
+
+        .door.wrong {
+            box-shadow: 0 10px 28px rgba(255, 80, 120, 0.08);
+            filter: hue-rotate(-10deg) saturate(0.9);
+            animation: shakeX .6s cubic-bezier(.2, .8, .2, 1) 1;
+        }
+
+        .door.opening .face {
+            transform: translateY(-18px) scale(.95);
+            opacity: 0
+        }
+
+        .feedback {
+            height: 48px;
+            text-align: center;
+            font-weight: 800;
+            color: var(--muted);
+            margin-top: 10px
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            margin-top: 14px;
+            flex-wrap: wrap
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: none;
+            font-weight: 800;
+            cursor: pointer;
+            background: linear-gradient(90deg, var(--accent1), var(--accent2));
+            color: #fff;
+            box-shadow: 0 10px 28px rgba(255, 80, 140, 0.12)
+        }
+
+        .btn.secondary {
+            background: transparent;
+            border: 1px solid rgba(155, 55, 96, 0.08);
+            color: var(--muted);
+            box-shadow: none;
+            font-weight: 700
+        }
+
+        /* banner */
+        .banner {
+            position: fixed;
+            left: 50%;
+            top: 12%;
+            transform: translateX(-50%);
+            background: #fff;
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(200, 80, 130, 0.06);
+            box-shadow: 0 12px 34px rgba(200, 60, 110, 0.06);
+            display: none;
+            z-index: 1300;
+            text-align: center;
+            padding: 10px 16px
+        }
+
+        /* love full-screen */
+        .loveFull {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 22px;
+            background: rgba(255, 245, 249, 0.95);
+            z-index: 1200;
+            padding: 24px;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity .36s ease, visibility .36s;
+        }
+
+        .loveFull.show {
+            visibility: visible;
+            opacity: 1
+        }
+
+        .loveFull .bgImg {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            filter: blur(8px) brightness(.65);
+            opacity: 0.98
+        }
+
+        .loveCard {
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 245, 249, 0.95));
+            padding: 28px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid rgba(255, 90, 140, 0.06);
+            box-shadow: 0 30px 90px rgba(200, 60, 110, 0.08)
+        }
+
+        .loveCard h1 {
+            margin: 0;
+            font-size: 2.2rem;
+            color: var(--accent2);
+            letter-spacing: 0.6px
+        }
+
+        .loveCard p {
+            margin-top: 10px;
+            color: #6e2a51;
+            font-weight: 700
+        }
+
+        .loveCard img {
+            width: 220px;
+            height: 220px;
+            border-radius: 14px;
+            object-fit: cover;
+            box-shadow: 0 18px 50px rgba(200, 60, 110, 0.08)
+        }
+
+        .particles {
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            overflow: visible;
+            z-index: 1001
+        }
+
+        @media (max-width:600px) {
+            .door {
+                width: 30%
+            }
+
+            .face {
+                font-size: 40px
+            }
+
+            .loveCard img {
+                width: 160px;
+                height: 160px
+            }
+
+            .loveCard h1 {
+                font-size: 1.6rem
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="card" role="application" aria-label="Cánh cửa tình yêu (ballad)">
+            <div class="header">
+                <div>
+                    <div class="title">Cánh cửa dẫn lối 💞</div>
+                    <div class="subtitle"></div>
+                </div>
+                <div class="score">Chuỗi: <span id="streak">0</span></div>
+            </div>
+
+            <div class="prompt" id="prompt">
+            </div>
+
+            <div class="doors" id="doors" aria-live="polite"></div>
+
+            <div class="feedback" id="feedback"></div>
+
+            <div class="controls">
+                <button class="btn" id="start">Bắt đầu (bật nhạc)</button>
+                <button class="btn" id="toggleMusic">Tắt nhạc</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="banner" id="banner" role="status" aria-live="polite"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- love full-screen -->
+    <div class="loveFull" id="loveFull" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="bgImg" id="loveBg"></div>
+        <div class="loveCard" id="loveCard">
+            <img id="puImg" src="pu.jpg" alt="Pu">
+            <h1>Anh iu em mất rùi 💕</h1>
+            <p>Em nhận lời nhé? 💘</p>
+            <div style="margin-top:12px">
+                <button class="btn" id="restartBtn">Chơi lại</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- audio elements (online) -->
+    <!-- main theme (ballad light) -->
+    <audio id="bgm" loop crossorigin="anonymous">
+        <source src="/romantic.mp3" type="audio/mpeg">
+        <!-- fallback text -->
+    </audio>
+
+    <!-- love theme (when tỏ tình) -->
+    <audio id="loveAudio" crossorigin="anonymous">
+        <source
+            src="https://cdn.pixabay.com/download/audio/2021/09/30/audio_aa5f6c9b5a.mp3?filename=emotional-piano-12288.mp3"
+            type="audio/mpeg">
+    </audio>
+
+    <script>
+
+
+        const doorsWrap = document.getElementById('doors');
+        const feedback = document.getElementById('feedback');
+        const streakEl = document.getElementById('streak');
+        const startBtn = document.getElementById('start');
+        const toggleMusicBtn = document.getElementById('toggleMusic');
+        const banner = document.getElementById('banner');
+        const particles = document.getElementById('particles');
+        const bgm = document.getElementById('bgm');
+        const loveAudio = document.getElementById('loveAudio');
+        const loveFull = document.getElementById('loveFull');
+        const loveBg = document.getElementById('loveBg');
+        const puImg = document.getElementById('puImg');
+        const restartBtn = document.getElementById('restartBtn');
+
+        let streak = 0;
+        let busy = false;
+        let correctIndex = 0;
+        let currentDoors = 3;
+        let musicEnabled = true;
+
+        // WebAudio context for effects
+        let audioCtx = null;
+        function ensureAudioCtx() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Utility: show banner
+        function showBanner(txt, ms = 1500) {
+            banner.textContent = txt;
+            banner.style.display = 'block';
+            setTimeout(() => banner.style.display = 'none', ms);
+        }
+
+        // update streak UI
+        function updateStreakUI() {
+            streakEl.textContent = streak;
+        }
+
+        // particle creator
+        function createParticle(symbol, x, y, opts = {}) {
+            const el = document.createElement('div');
+            el.textContent = symbol;
+            el.style.position = 'absolute';
+            el.style.left = x + 'px';
+            el.style.top = y + 'px';
+            el.style.fontSize = (opts.size || 20) + 'px';
+            el.style.pointerEvents = 'none';
+            el.style.zIndex = 1000;
+            particles.appendChild(el);
+            const dx = (Math.random() - 0.5) * (opts.spread || 140);
+            const dy = -(80 + Math.random() * (opts.height || 140));
+            el.animate([
+                { transform: 'translate(0,0) rotate(0deg)', opacity: 1 },
+                { transform: `translate(${dx}px, ${dy}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+            ], { duration: 800 + Math.random() * 700, easing: 'cubic-bezier(.2,.8,.2,1)' });
+            setTimeout(() => el.remove(), 1800);
+        }
+
+        function spawnHearts(n = 12) {
+            for (let i = 0; i < n; i++) {
+                const x = window.innerWidth * (0.08 + Math.random() * 0.84);
+                const y = window.innerHeight * (0.6 + Math.random() * 0.3);
+                createParticle('💗', x, y, { size: 12 + Math.random() * 26, spread: 90, height: 160 });
+            }
+        }
+
+        // WebAudio effect: correct (pling)
+        function playCorrectSound() {
+            try {
+                ensureAudioCtx();
+                const now = audioCtx.currentTime;
+                const oscA = audioCtx.createOscillator();
+                oscA.type = 'sine';
+                oscA.frequency.setValueAtTime(880, now);
+                const oscB = audioCtx.createOscillator();
+                oscB.type = 'triangle';
+                oscB.frequency.setValueAtTime(1320, now);
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.0001, now);
+                gain.gain.exponentialRampToValueAtTime(0.18, now + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(3000, now);
+                oscA.connect(gain); oscB.connect(gain); gain.connect(filter); filter.connect(audioCtx.destination);
+                oscA.start(now); oscB.start(now);
+                oscA.stop(now + 0.45); oscB.stop(now + 0.45);
+            } catch (e) { /* ignore */ }
+        }
+
+        // WebAudio effect: wrong (thump)
+        function playWrongSound() {
+            try {
+                ensureAudioCtx();
+                const now = audioCtx.currentTime;
+                const o = audioCtx.createOscillator();
+                o.type = 'sine';
+                o.frequency.setValueAtTime(140, now);
+                const g = audioCtx.createGain();
+                g.gain.setValueAtTime(0.0001, now);
+                g.gain.exponentialRampToValueAtTime(0.28, now + 0.01);
+                g.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass'; filter.frequency.setValueAtTime(600, now);
+                o.connect(g); g.connect(filter); filter.connect(audioCtx.destination);
+                o.start(now); o.stop(now + 0.7);
+            } catch (e) { /* ignore */ }
+        }
+
+        // WebAudio: love chord
+        function playLoveChord() {
+            try {
+                ensureAudioCtx();
+                const now = audioCtx.currentTime;
+                const freqs = [440, 660, 880];
+                freqs.forEach((f, i) => {
+                    const o = audioCtx.createOscillator();
+                    o.type = 'sine';
+                    o.frequency.setValueAtTime(f, now + i * 0.02);
+                    const g = audioCtx.createGain();
+                    g.gain.setValueAtTime(0.0001, now);
+                    g.gain.exponentialRampToValueAtTime(0.12 / (i + 1), now + 0.05);
+                    g.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.start(now); o.stop(now + 2.2);
+                });
+            } catch (e) { /* ignore */ }
+        }
+
+        // Render doors
+        function renderDoors(n) {
+            doorsWrap.innerHTML = '';
+            for (let i = 0; i < n; i++) {
+                const d = document.createElement('div');
+                d.className = 'door' + (n === 6 ? ' large' : '') + (n === 9 ? ' xlarge' : '');
+                d.dataset.index = i;
+                d.innerHTML = `<div class="face">🚪</div><div class="label">Cửa ${i + 1}</div>`;
+                d.addEventListener('pointerdown', () => {
+                    if (busy) return;
+                    openDoor(d, i);
+                });
+                d.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') openDoor(d, i); });
+                doorsWrap.appendChild(d);
+            }
+        }
+
+        function pickCorrect() {
+            correctIndex = Math.floor(Math.random() * currentDoors);
+        }
+
+        // reset back to 3 doors & zero streak
+        function resetToBase() {
+            streak = 0; updateStreakUI();
+            currentDoors = 3;
+            renderDoors(currentDoors);
+            pickCorrect();
+            feedback.textContent = '';
+            busy = false;
+        }
+
+        // wrong
+        function onWrong(chosenEl) {
+            playWrongSound();
+            const rect = chosenEl.getBoundingClientRect();
+            for (let i = 0; i < 10; i++) {
+                createParticle('💔', rect.left + rect.width / 2 + (Math.random() - 0.5) * 40, rect.top + rect.height / 2 + (Math.random() - 0.5) * 20, { size: 18 });
+            }
+            chosenEl.classList.add('wrong');
+            streak = 0; updateStreakUI();
+            feedback.textContent = 'Ối, sai rồi — chuỗi về 0 😢';
+            feedback.style.color = '#b33a6b';
+
+            setTimeout(() => {
+                // remove wrong class and reset
+                const doorsEls = doorsWrap.querySelectorAll('.door');
+                doorsEls.forEach(el => el.classList.remove('wrong'));
+                resetToBase();
+                showBanner('Đã reset về 3 cửa');
+            }, 900);
+        }
+
+        // correct
+        function onCorrect(el) {
+            playCorrectSound();
+            el.classList.add('win');
+            const face = el.querySelector('.face'); if (face) face.textContent = '💖';
+            streak++; updateStreakUI();
+            feedback.textContent = 'Tuyệt! Đúng rồi 💘';
+            feedback.style.color = '#d63384';
+
+            if (streak >= 3) {
+                // show love full-screen
+                setTimeout(() => showLoveFull(), 500);
+                return;
+            }
+
+            setTimeout(() => {
+                // increase doors after correct: 1->6, 2->9
+                if (streak === 1) currentDoors = 6;
+                else if (streak === 2) currentDoors = 9;
+                renderDoors(currentDoors);
+                pickCorrect();
+                busy = false;
+                feedback.textContent = '';
+                showBanner(`Chuỗi ${streak} — Bây giờ có ${currentDoors} cửa`);
+            }, 700);
+        }
+
+        function openDoor(el, idx) {
+            busy = true;
+            el.classList.add('opening');
+            setTimeout(() => {
+                if (idx === correctIndex) onCorrect(el);
+                else onWrong(el);
+                el.style.pointerEvents = 'none';
+            }, 260);
+        }
+
+        // Love full-screen
+        function showLoveFull() {
+            const imgSrc = puImg && puImg.src ? puImg.src : '';
+            loveBg.style.backgroundImage = `url('${imgSrc}')`;
+            loveFull.classList.add('show');
+            loveFull.setAttribute('aria-hidden', 'false');
+            spawnHeartsFull();
+            // stop bgm with fade and start loveAudio with fade
+            fadeAudio(bgm, 1, 0, 600, () => {
+                try { bgm.pause(); } catch (e) { }
+            });
+            // start love audio and fade in
+            try {
+                loveAudio.currentTime = 0;
+                loveAudio.volume = 0;
+                loveAudio.play().catch(() => { /* maybe blocked */ });
+                fadeAudio(loveAudio, 0, 1, 900);
+            } catch (e) { }
+            // chord
+            playLoveChord();
+        }
+
+        // spawn many hearts gradually
+        function spawnHeartsFull() {
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => spawnHearts(1), i * 30);
+            }
+        }
+
+        // fade utility for HTMLAudioElement
+        function fadeAudio(audioEl, from, to, durationMs, onEnd) {
+            try {
+                audioEl.volume = from;
+                const steps = 20;
+                const stepTime = durationMs / steps;
+                let currentStep = 0;
+                const delta = (to - from) / steps;
+                const iv = setInterval(() => {
+                    currentStep++;
+                    audioEl.volume = Math.max(0, Math.min(1, from + delta * currentStep));
+                    if (currentStep >= steps) {
+                        clearInterval(iv);
+                        audioEl.volume = to;
+                        if (onEnd) onEnd();
+                    }
+                }, stepTime);
+            } catch (e) { if (onEnd) onEnd(); }
+        }
+
+        // controls
+        startBtn.addEventListener('click', async () => {
+            // user gesture: init audio context for WebAudio and allow audio playback
+            try {
+                ensureAudioCtx();
+                if (audioCtx && audioCtx.state === 'suspended') await audioCtx.resume();
+            } catch (e) { /* ignore */ }
+
+            // try autoplay bgm
+            try {
+                bgm.currentTime = 0;
+                bgm.volume = 1;
+                await bgm.play();
+                musicEnabled = true;
+                toggleMusicBtn.textContent = 'Tắt nhạc';
+            } catch (err) {
+                // blocked: prompt user
+                musicEnabled = false;
+                toggleMusicBtn.textContent = 'Bật nhạc';
+                showBanner('Trình duyệt chặn autoplay — nhấn "Bắt đầu" hoặc "Bật nhạc" để phát âm thanh');
+            }
+            resetToBase();
+            showBanner('Bắt đầu — chúc may mắn! 🍀');
+        });
+
+        toggleMusicBtn.addEventListener('click', async () => {
+            if (bgm.paused && !loveFull.classList.contains('show')) {
+                try { await bgm.play(); toggleMusicBtn.textContent = 'Tắt nhạc'; musicEnabled = true; } catch { toggleMusicBtn.textContent = 'Bật nhạc'; musicEnabled = false; }
+            } else if (!bgm.paused && !loveFull.classList.contains('show')) {
+                bgm.pause(); toggleMusicBtn.textContent = 'Bật nhạc'; musicEnabled = false;
+            } else if (loveFull.classList.contains('show')) {
+                // if love audio playing, toggle it instead
+                if (loveAudio.paused) { loveAudio.play().then(() => toggleMusicBtn.textContent = 'Tắt nhạc').catch(() => toggleMusicBtn.textContent = 'Bật nhạc'); }
+                else { loveAudio.pause(); toggleMusicBtn.textContent = 'Bật nhạc'; }
+            }
+        });
+
+        // when loveAudio ends, ensure UI state
+        loveAudio.addEventListener('ended', () => {
+            // after love audio finishes, keep love screen visible until user restarts
+            toggleMusicBtn.textContent = 'Bật nhạc';
+        });
+
+        // audio file error handlers (optional)
+        bgm.addEventListener('error', () => showBanner('Không thể tải nhạc nền (vui lòng kiểm tra mạng)'));
+        loveAudio.addEventListener('error', () => showBanner('Không thể tải nhạc tỏ tình (vui lòng kiểm tra mạng)'));
+
+        // restart button inside love card
+        restartBtn.addEventListener('click', () => {
+            loveFull.classList.remove('show');
+            loveFull.setAttribute('aria-hidden', 'true');
+            // fade out loveAudio and fade in bgm
+            fadeAudio(loveAudio, loveAudio.volume || 1, 0, 500, () => { try { loveAudio.pause(); } catch (e) { } });
+            try {
+                bgm.currentTime = 0;
+                bgm.play().catch(() => { });
+                fadeAudio(bgm, 0, 1, 700);
+                toggleMusicBtn.textContent = 'Tắt nhạc';
+            } catch (e) { }
+            resetToBase();
+        });
+
+        // keyboard reset (R)
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'r') { resetToBase(); showBanner('Đã reset (R)'); }
+        });
+
+        // init: render 3 doors and pick a correct index
+        renderDoors(currentDoors);
+        pickCorrect();
+        updateStreakUI();
+
+        // prevent mobile scroll during play
+        document.addEventListener('touchmove', (e) => {
+            if (!loveFull.classList.contains('show')) e.preventDefault();
+        }, { passive: false });
+
+        // lazy init: try to autoplay when page loads (user requested autoplay)
+        window.addEventListener('load', async () => {
+            // try to autoplay bgm (may be blocked by browser)
+            try {
+                bgm.volume = 1;
+                await bgm.play();
+                musicEnabled = true;
+                toggleMusicBtn.textContent = 'Tắt nhạc';
+                // if we auto-play, good; if loveAudio was playing earlier, handle
+            } catch (err) {
+                // show subtle hint to user to press Start if autoplay blocked
+                showBanner('Nếu không nghe nhạc, nhấn "Bắt đầu" hoặc "Bật nhạc" để kích hoạt âm thanh');
+            }
+        });
+
+        // small helper for spawning hearts used by spawnHeartsFull
+        function spawnHearts(n = 8) {
+            for (let i = 0; i < n; i++) {
+                const x = window.innerWidth * (0.08 + Math.random() * 0.84);
+                const y = window.innerHeight * (0.6 + Math.random() * 0.35);
+                createParticle('💗', x, y, { size: 12 + Math.random() * 22, spread: 90, height: 160 });
+            }
+        }
+    </script>
+</body>
+
+</html>
